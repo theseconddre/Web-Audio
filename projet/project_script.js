@@ -1,25 +1,8 @@
 /*********
-Variables!
+Variables
 **********/
 
 var context = null;
-/*
-//get lowpass slider
-var slider = document.getElementById("lowpass");
-var output = document.getElementById("demo");
-output.innerHTML = slider.value; // Display the lowpass slider value
-
-//on slider glide, vary effects
-// Update the current slider value (each time you drag the slider handle)
-slider.oninput = function() {
-	ouptut.innerHTML = this.value;
-	//lowPassFilter.frequency = this.value;
-}
-
-
-//get dub delay slider
-var dd_slider = document.getElementById("dubdelay");
-*/
 
 // Below is keyboard emulation for C4-C5 a-i keys
 var emulatedKeys = {
@@ -37,11 +20,12 @@ let freqMax = 20000;
 let init = false;
 let voice;
 
-var tremolo = new Pizzicato.Effects.Tremolo({
-    speed: 7,
-    depth: 0.5,
-    mix: 1
-});
+// ping pong delay
+let pingPongDelay = new Pizzicato.Effects.PingPongDelay({
+    feedback: 0.6,
+    time: 0.4,
+    mix: 0.5
+})
 
 // low pass filter
 let lowPassFilter = new Pizzicato.Effects.LowPassFilter({
@@ -49,11 +33,17 @@ let lowPassFilter = new Pizzicato.Effects.LowPassFilter({
     peak: 10
 })
 
+// high pass filter
+let highPassFilter = new Pizzicato.Effects.HighPassFilter({
+    frequency: 10,
+    peak: 1
+});
+
 var dubDelay = new Pizzicato.Effects.DubDelay({
-    feedback: 0.3,
+    feedback: 0.6,
     time: 0.7,
     mix: 0.5,
-    cutoff: 400
+    cutoff: 700
 });
 
 var convolver = new Pizzicato.Effects.Convolver({
@@ -64,7 +54,6 @@ var convolver = new Pizzicato.Effects.Convolver({
 /*********
 Functions
 **********/
-
 
 function midiToFreq(midiNote){
   const freq = Math.pow(2, (midiNote-69)/12)*440;
@@ -89,41 +78,16 @@ document.addEventListener("keydown", function(e) {
       source: 'wave', 
       options: {
         type: 'triangle',
-        frequency: midiToFreq(emulatedKeys[e.key]),
-        volume: 0.3
+        frequency: midiToFreq(emulatedKeys[e.key])
       }
     });
     notePlayed.addEffect(convolver); 
-    notePlayed.addEffect(tremolo);
     notePlayed.addEffect(lowPassFilter);
-    //notePlayed.addEffect(dubDelay);
+    notePlayed.addEffect(dubDelay);
     notePlayed.play();
+    
   }
 });
-
-/*
-Template.myTemplate.rendered = function(){
-	document.getElementById("lowpass").oninput = function() {
-	    myFunction();
-	};
-}
-
-function myFunction() {
-   var val = document.getElementById("lowpass").value; //gets the oninput value
-   lowPassFilter.frequency = val;
-}
-
-
-
-var i = 0;
-slider.addEventListener("input", function(e) {
-	output.innerHTML = this.value;
-	lowPassFilter.frequency = e.currentTarget.value;
-	//lowPassFilter.frequency = 200 + i;
-	i += 100;
-	// vary low pass filter on slider axis  
-})
-*/
 
 // Stop sound when key released
 document.addEventListener("keyup", function(e) {
@@ -132,38 +96,28 @@ document.addEventListener("keyup", function(e) {
 
   if (emulatedKeys.hasOwnProperty(e.key)) {
     console.log(emulatedKeys[e.key] + ' released');
-    notePlayed.removeEffect(lowPassFilter);	
-    notePlayed.removeEffect(tremolo);
     notePlayed.stop();
   }
 });
 
 // on mouse move, vary effects parameters functions of Y mouse position
-
 document.body.addEventListener('mousemove', function (event) {
-    // vary tremolo speed on X axis
-    tremolo.speed = Math.abs((event.pageX / document.body.clientWidth)-0.5) * 20;
+    // vary dub delay on X axis
+    dubDelay.time = event.pageX / document.body.clientWidth;
     // vary low pass filter on Y axis  
-    lowPassFilter.frequency = Math.pow(1-(event.pageY / document.body.clientHeight), 3) * freqMax;
+    lowPassFilter.frequency = event.pageY / document.body.clientHeight * freqMax;
 }, false);
-
 
 // on mouse scroll, vary effects parameters functions 
 document.body.addEventListener('wheel', function (event) {
     // vary time of dub delay on up scroll
     const delta = Math.sign(event.deltaY);
-    if(delta > 0){
+    if(delta > 0 && convolver.mix > 0.1){
       convolver.mix -= 0.1;
-      if(convolver.mix < 0.1){
-      	convolver.mix = 0.1;
-      }
       console.log('Scroll down ' + convolver.mix);
     }
-    else if (delta < 0){
+    else if (convolver.mix < 0.9 && delta < 0){
       convolver.mix += 0.1;
-      if(convolver.mix > 0.9){
-      	convolver.mix = 0.9;
-      }
       console.log('Scroll up ' + convolver.mix);
     }
 
