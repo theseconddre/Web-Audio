@@ -25,8 +25,8 @@ Un dub delay a également fait l'objet d'une implémentation dans ce projet mais
 
 ## Contraintes et projections
 Nous avons par la suite décidé de contrôler ce délai par l'intermédiaire de sliders, comme c'est le cas dans les exemples illustrés dans https://alemangui.github.io/pizzicato/#dub-delay. Toutefois, ce développement suscitait trop d'erreurs et nous avons décidé d'abandonner l'idée de l'effet de délai. Des traces de recherches sont présentes dans le fichier javascript project_script.js et dans index.html.
-La gestion des différents moyens de contrôler un slider (via un EventListener ou via la propriété onChange de la balise html du slider) s'est révélée assez complexe et nous manquions de temps.
-Ce projet est modulaire et peut aisément se poursuivre avec l'ajout d'une multitude d'autres effets de la librairie Pizzicato ! Nous pensons actuellement à implémenter des sons d'arrière-plan avec un clic de la souris, des effets de flanger ou de chorus avec le double-clic, et de tenter de résoudre le problème des sliders.
+La gestion des différents moyens de contrôler un slider (via un EventListener ou via la propriété onChange de la balise html du slider) s'est révélée assez complexe et nous manquions de temps. <br />
+Ce projet est modulaire et peut aisément se poursuivre avec l'ajout d'une multitude d'autres effets de la librairie Pizzicato ! Nous pensons actuellement à implémenter des sons d'arrière-plan avec un clic de la souris, des effets de flanger ou de chorus avec le double-clic, et de tenter de résoudre le problème des sliders.<br />
 Enfin, nous aimerions pouvoir jouer des sons de manière simultanée afin de produire des accords : cela peut s'obtenir en changeant la fonction d'appui d'une touche, qui contient aujourd'hui l'attribut "keydown" et n'autorise qu'une seule touche à la fois.
 
 Nous vous souhaitons une belle expérience musicale ! 
