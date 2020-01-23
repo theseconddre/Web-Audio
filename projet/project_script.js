@@ -134,6 +134,7 @@ document.addEventListener("keyup", function(e) {
     console.log(emulatedKeys[e.key] + ' released');
     notePlayed.removeEffect(lowPassFilter);	
     notePlayed.removeEffect(tremolo);
+    notePlayed.removeEffect(convolver);
     notePlayed.stop();
   }
 });
